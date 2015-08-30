@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+import sys;
+import binascii;
+import array;
+import time;
+
+from GoodFETowe import GoodFETowe;
+from intelhex import IntelHex;
+
+#Initialize FET and set baud rate
+client=GoodFETowe();
+client.serInit()
+
+client.setup()
+#b = time.time()
+#client.writecmd(0x81, 0x11, 0, [])      # Receive Response
+#e = time.time()
+#print e-b;
+#sys.exit(0);
+
+#for i in range(0xB000, 0xB100):
+#    if(i % 0x40 == 0):
+#        client.eraseFlash(i)
+#
+#for i in range(0xB000, 0xB100):
+#    client.writeFlash(i, i & 0xff)
+#    
+#for i in range(0xB000, 0xB100):
+#    print "0x"+binascii.hexlify(client.readFlash(i));
+
+###########
+#client.writecmd(0x81, 0x02, 0, [])      # Generate Reset Pulse 
+#client.writecmd(0x81, 0x03, 1, [0xcc])  # Skip ROM
+#client.writecmd(0x81, 0x03, 1, [0x44])  # Convert
+
+#while True:
+#    client.writecmd(0x81, 0x04, 0, [])  # Receive Byte
+#    if not client.data == 0:            # Poll DONE
+#        break
+#    time.sleep(0.1)                   
+    
+#client.writecmd(0x81, 0x02, 0, [])      # Generate Reset Pulse 
+#client.writecmd(0x81, 0x03, 1, [0xcc])  # Skip ROM
+#client.writecmd(0x81, 0x03, 1, [0xbe])  # Read Scratchpad
+
+#client.writecmd(0x81, 0x04, 0, [])  # Receive Byte
+#temp = ord(client.data)>>4;
+#client.writecmd(0x81, 0x04, 0, [])  # Receive Byte
+#temp += ord(client.data)<<4;
+#print temp
+
+#for x in range(0, 9):
+#    client.writecmd(0x81, 0x04, 0, [])  # Receive Byte
+#    print "0x"+binascii.hexlify(client.data);
+
+while True:
+    #sys.stderr.write("\x1b[2J\x1b[H")
+    value=ord(client.sample())
+    if value & 0x80:
+        print "%s; -%i C" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), ~value & 0x7F);
+    else:
+        print "%s; %i C"  % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), value & 0x7F);
+    time.sleep(15);
